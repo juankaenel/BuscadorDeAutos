@@ -8,7 +8,6 @@ const transmision = document.querySelector('#transmision');
 
 const resultado = document.querySelector('#resultado'); //Contenedor para los resultados
 
-
 //Fechas
 const max = new Date().getFullYear(); //año actual
 const min = max - 10 //año minimo
@@ -55,16 +54,18 @@ maximo.addEventListener('change',e=>{
 });
 
 puertas.addEventListener('change',e=>{
-    datosBusqueda.puertas = e.target.value;
+    datosBusqueda.puertas = parseInt(e.target.value);
+    filtrarAuto();
 });
 
 transmision.addEventListener('change',e=>{
     datosBusqueda.transmision = e.target.value;
+    filtrarAuto();
 });
 
 color.addEventListener('change',e=>{
     datosBusqueda.color = e.target.value;
-    console.log(datosBusqueda);
+    filtrarAuto();
 });
 //------------ Funciones ------------
 function mostrarAutos(autos){
@@ -99,12 +100,20 @@ function llenarSelect(){
     }
 }
 
-//Funcion que filtra en base a la búsqueda
+//--------- Filtros ---------
+//Funcion principal de alto nivel que filtra en base a la búsqueda
 function filtrarAuto(){
     //función de alto nivel, toma otra función como parametro
-    const resultado = autos.filter( filtrarMarca ).filter( filtrarYear).filter( filtrarMinimo ).filter( filtrarMaximo ) 
+    const resultado = autos.filter( filtrarMarca ).filter( filtrarYear).filter( filtrarMinimo ).filter( filtrarMaximo ).filter( filtrarPuerta ).filter( filtrarTransmision).filter( filtrarColor) 
     // console.log(resultado);
-    mostrarAutos(resultado); //llamo a la fn y le paso el resultado de los filtros
+
+    if(resultado.length){ //si el arreglo no está vacío mostrame los autos
+        mostrarAutos(resultado); //llamo a la fn y le paso el resultado de los filtros
+    } //sino mostrame un msj de error
+    else{
+        noResultado();
+    }
+
 } 
 
 function filtrarMarca(auto){ //el parm auto lo recibe de autos
@@ -142,4 +151,37 @@ function filtrarMaximo(auto){
         return auto.precio <= maximo; //retorname los autos cuyo precio sean mayor o igual al minimo
     }
     return auto;
+}
+
+function filtrarPuerta(auto){
+    const { puertas } = datosBusqueda;
+    if(puertas){
+        return auto.puertas === puertas;
+    }
+    return auto;
+}
+
+function filtrarTransmision(auto){
+    const { transmision } = datosBusqueda;
+    if(transmision){
+        return auto.transmision === transmision;
+    }
+    return auto;
+}
+
+function filtrarColor(auto){
+    const { color } = datosBusqueda;
+    if(color){
+        return auto.color === color;
+    }
+    return auto;
+}
+
+//Función que devuelve un msj en caso que el array de resultados esté vacío
+function noResultado(){
+    limpiarHTML();
+    const msj = document.createElement('div');
+    msj.classList.add('alerta','error');
+    msj.textContent = 'No existe ningún auto con esos parámetros ingresados';
+    resultado.appendChild(msj);
 }
