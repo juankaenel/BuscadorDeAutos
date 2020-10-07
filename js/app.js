@@ -25,8 +25,9 @@ const datosBusqueda = {
 }
 
 //------------ Eventos ------------
+//Evento principal
 document.addEventListener('DOMContentLoaded',()=>{
-    mostrarAutos(); //muestra los autos al cargar
+    mostrarAutos(autos); //muestra los autos al cargar, este parametro viene de db.js
 
     //Llena las opciones de año
     llenarSelect();
@@ -64,7 +65,9 @@ color.addEventListener('change',e=>{
     console.log(datosBusqueda);
 });
 //------------ Funciones ------------
-function mostrarAutos(){
+function mostrarAutos(autos){
+    limpiarHTML(); //Elimina el html previo
+
     autos.forEach(auto=>{
         const {marca,modelo,year,puertas,transmision,precio,color} = auto;
         const autoHTML = document.createElement('p'); //creamos un p para cada auto
@@ -75,6 +78,13 @@ function mostrarAutos(){
         //insertar el html en el div resultado
         resultado.appendChild(autoHTML);    
     })
+}
+
+//Función para limpiar el html
+function limpiarHTML(){
+    while(resultado.firstChild){ //mientras haya algo dentro de resultado
+        resultado.removeChild(resultado.firstChild);
+    }
 }
 
 //Genera los años del select
@@ -91,7 +101,8 @@ function llenarSelect(){
 function filtrarAuto(){
     //función de alto nivel, toma otra función como parametro
     const resultado = autos.filter( filtrarMarca ).filter( filtrarYear) 
-    console.log(resultado);
+    // console.log(resultado);
+    mostrarAutos(resultado); //llamo a la fn y le paso el resultado de los filtros
 } 
 
 function filtrarMarca(auto){
