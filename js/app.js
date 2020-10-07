@@ -45,11 +45,13 @@ year.addEventListener('change',e=>{
 });
 
 minimo.addEventListener('change',e=>{
-    datosBusqueda.minimo = e.target.value;
+    datosBusqueda.minimo = parseInt(e.target.value);
+    filtrarAuto();
 });
 
 maximo.addEventListener('change',e=>{
     datosBusqueda.maximo = e.target.value;
+    filtrarAuto();
 });
 
 puertas.addEventListener('change',e=>{
@@ -100,12 +102,12 @@ function llenarSelect(){
 //Funcion que filtra en base a la búsqueda
 function filtrarAuto(){
     //función de alto nivel, toma otra función como parametro
-    const resultado = autos.filter( filtrarMarca ).filter( filtrarYear) 
+    const resultado = autos.filter( filtrarMarca ).filter( filtrarYear).filter( filtrarMinimo ).filter( filtrarMaximo ) 
     // console.log(resultado);
     mostrarAutos(resultado); //llamo a la fn y le paso el resultado de los filtros
 } 
 
-function filtrarMarca(auto){
+function filtrarMarca(auto){ //el parm auto lo recibe de autos
     const { marca } = datosBusqueda; //destructuring
 
     if(marca){ //si no está vacio la marca en datosBusqueda.marca
@@ -113,12 +115,31 @@ function filtrarMarca(auto){
     }
     return auto; //si no selecciono ningun auto returno el auto completo, no hago filtros
 }
+
 function filtrarYear(auto){
     const { year } = datosBusqueda; 
 
     if(year){ 
         //return auto.year === parseInt(year); //year viene como string desde datosBusqueda entonces hay que parsearlo
         return auto.year === year; //meto la lógica en el event listener
+    }
+    return auto;
+}
+
+function filtrarMinimo(auto){
+    const { minimo } = datosBusqueda; 
+
+    if(minimo){ 
+        return auto.precio >= minimo; //retorname los autos cuyo precio sean mayor o igual al minimo
+    }
+    return auto;
+}
+
+function filtrarMaximo(auto){
+    const { maximo } = datosBusqueda; 
+
+    if(maximo){ 
+        return auto.precio <= maximo; //retorname los autos cuyo precio sean mayor o igual al minimo
     }
     return auto;
 }
