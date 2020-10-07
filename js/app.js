@@ -39,7 +39,8 @@ marca.addEventListener('change',e=>{
 });
 
 year.addEventListener('change',e=>{
-    datosBusqueda.year = e.target.value;
+    datosBusqueda.year = parseInt(e.target.value); //parseo la fecha a entero
+    filtrarAuto();
 });
 
 minimo.addEventListener('change',e=>{
@@ -88,7 +89,8 @@ function llenarSelect(){
 
 //Funcion que filtra en base a la búsqueda
 function filtrarAuto(){
-    const resultado = autos.filter( filtrarMarca ) //función de alto nivel, toma otra función como parametro
+    //función de alto nivel, toma otra función como parametro
+    const resultado = autos.filter( filtrarMarca ).filter( filtrarYear) 
     console.log(resultado);
 } 
 
@@ -99,4 +101,13 @@ function filtrarMarca(auto){
         return auto.marca === marca; //filtra a todos los que tengan la misma marca
     }
     return auto; //si no selecciono ningun auto returno el auto completo, no hago filtros
+}
+function filtrarYear(auto){
+    const { year } = datosBusqueda; 
+
+    if(year){ 
+        //return auto.year === parseInt(year); //year viene como string desde datosBusqueda entonces hay que parsearlo
+        return auto.year === year; //meto la lógica en el event listener
+    }
+    return auto;
 }
